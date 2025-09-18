@@ -1,2 +1,100 @@
 # docker-for-newbies
 The most simplest project that will get you started on Docker and understand why even need it in the first place.
+
+Docker, containers, and containerization can often feel alien and intimidating, which keeps many of us from exploring them. But once you break them down, the core concepts are surprisingly simple. This guide provides a practical, step-by-step example to help you demystify these concepts.
+What Exactly is a Container?
+
+Let's use an analogy. Imagine you are a skilled glass bottle manufacturer, known for your quality products. You hire a new person and explain your entire process to them: the type of glass to use, the step-by-step molding procedure, and the cooling process.
+
+A while later, they tell you the bottles aren't forming right; they are too brittle or misshapen.  They had all the instructions you gave them, so why didn't it work? What they missed was the most crucial piece of information: the precise temperature of the furnace. This single detail, the environment in which the entire process takes place, is the foundation upon which everything else depends. It's the difference between success and failure.
+
+So, just like in our analogy, we need a consistent foundation to build our applications on.
+The Problem This Project Solves
+
+Now let's apply this to a real-world programming problem.
+
+Here are the instructions to run a simple Python script:
+
+    Install a specific version of Python on your PC.
+
+    Save the app.py file to your system.
+
+    Navigate to the directory in your terminal.
+
+    Run the file by typing python app.py.
+
+Just like the glass-making instructions, this process seems straightforward. But just as the furnace temperature determines success, the version of Python determines if your code will compile and run correctly.
+
+Our app.py file contains code that will only work with an older version of Python. If you have a modern version (like Python 3), the code will fail with a syntax error.
+
+So, to run this one file, do you have to uninstall your current Python version and install an old one? What happens if you need to work on another project that requires a completely different version? This manual process is impractical and frustrating.
+The Solution: Containerization
+
+This is where containers come in. What if you could create a small, isolated environment—a virtual "furnace"—that contains the exact version of Python you need? You could then give it the code you want to run, without ever having to change your local machine's setup.
+
+This virtual block of an environment is called a container. It allows you to control the exact version of the base operating system, the specific libraries to install, and the code to run—all from one single file.
+
+Let's get started and build our first container.
+Step 1: Install Docker
+
+First, you need to install Docker on your machine.
+
+    For Windows: Follow the official installation guide from the Docker website.
+
+    For Linux: Follow the official installation guide for your specific distribution. For Ubuntu, you can follow this guide.
+
+To confirm that Docker is installed correctly, open your terminal and type:
+
+docker --version
+
+You should see the installed Docker version.
+Step 2: Create the Project Files
+
+Let's create a new directory for this project. You can name it my-first-docker-app or docker-for-newbies.
+
+mkdir my-first-docker-app
+cd my-first-docker-app
+
+Open this directory in your preferred code editor (like VS Code). Inside, create two new files:
+
+    app.py
+    Create a file named app.py and paste the following code:
+
+    # This will work in Python 2.x but fail in Python 3.x
+    print "Hello, from a very old Python!"
+
+    # This will work in both Python 2.x and 3.x
+    print("This is also a test.")
+
+    Dockerfile
+    Next, create a file named exactly Dockerfile (with a capital D and no extension). By default, Docker looks for a file with this exact name. If you were to name it dockerfile or MyDockerfile, you would have to specify the name when building the image.
+
+    Paste the following code into your Dockerfile:
+
+    FROM python:2.7
+
+    WORKDIR /app
+
+    COPY . /app
+
+    CMD ["python", "app.py"]
+
+Step 3: Breaking Down the Dockerfile
+
+Now let's break down each line so it doesn't scare us anymore.
+
+    FROM python:2.7
+    This is the most important line, just like the correct temperature in our glass analogy. This line specifies the base image we want to build our container on. It tells Docker to pull the official python image, but specifically the version tagged 2.7. You can find countless base images on Docker Hub. For a different project, this line could be FROM ubuntu:latest or FROM node:18.
+
+    WORKDIR /app
+    This instruction sets the working directory for all subsequent commands within the container. It's like telling Docker, "From now on, all operations should happen inside the /app directory." If this directory doesn't exist, Docker will create it for you.
+
+    COPY . /app
+    This command copies files from your local machine into the container.
+
+        The source (.) refers to all the files in your current local directory (where the Dockerfile is located).
+
+        The destination (/app) is the absolute path inside the container where the files will be copied. Because we set the WORKDIR to /app just before this, this command is functionally the same as COPY . ..
+
+    CMD ["python", "app.py"]
+    This is the default command that will be executed when the container starts. It tells the container to run the python executable with app.py as an argument.
